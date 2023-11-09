@@ -300,7 +300,7 @@ public class SudokuBase {
      */
     public static void main(String[] args){
 	//________________________________________
-        System.out.print("Hello, World:");
+
     }  // fin main
 
 } // fin SudokuBase
