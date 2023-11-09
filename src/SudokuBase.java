@@ -31,8 +31,8 @@ public class SudokuBase {
 
 
     /** pré-requis :  n >= 0
-     *  résultat : un tableau de booléens représentant le sous-ensemble de l'ensemble des entiers 
-     *             de 1 à n égal à lui-même 
+     *  résultat : un tableau de booléens représentant le sous-ensemble de l'ensemble des entiers
+     *             de 1 à n égal à lui-même
      */
     public static boolean[] ensPlein(int n){
 	//_____________________________________
@@ -65,45 +65,45 @@ public class SudokuBase {
     //.........................................................................
 
     /**
- 
+
        1 2 3 4 5 6 7 8 9
-       ------------------- 
+       -------------------
        1 |6 2 9|7 8 1|3 4 5|
        2 |4 7 3|9 6 5|8 1 2|
        3 |8 1 5|2 4 3|6 9 7|
-       ------------------- 
+       -------------------
        4 |9 5 8|3 1 2|4 7 6|
        5 |7 3 2|4 5 6|1 8 9|
        6| 1 6 4|8 7 9|2 5 3|
-       ------------------- 
+       -------------------
        7 3 8 1|5 2 7|9 6 4
        8 |5 9 6|1 3 4|7 2 8|
        9 |2 4 7|6 9 8|5 3 1|
-       ------------------- 
+       -------------------
 
- 
+
        1 2 3 4 5 6 7 8 9
-       ------------------- 
+       -------------------
        1 |6 0 0|0 0 1|0 4 0|
        2 |0 0 0|9 6 5|0 1 2|
        3 |8 1 0|0 4 0|0 0 0|
-       ------------------- 
+       -------------------
        4 |0 5 0|3 0 2|0 7 0|
        5 |7 0 0|0 0 0|1 8 9|
        6||0 0 0|0 7 0|0 0 3|
-       ------------------- 
+       -------------------
        7 |3 0 0|0 2 0|9 0 4|
        8 |0 9 0|0 0 0|7 2 0|
        9 |2 4 0|6 9 0|0 0 0|
-       ------------------- 
+       -------------------
 
 
-       * pré-requis : 0<=k<=3 et g est une grille k^2xk^2 dont les valeurs sont comprises 
+       * pré-requis : 0<=k<=3 et g est une grille k^2xk^2 dont les valeurs sont comprises
        *              entre 0 et k^2 et qui est partitionnée en k sous-carrés kxk
-       * action : affiche la  grille g avec ses sous-carrés et avec les numéros des lignes 
+       * action : affiche la  grille g avec ses sous-carrés et avec les numéros des lignes
        *          et des colonnes de 1 à k^2.
        * Par exemple, pour k = 3, on obtient le dessin d'une grille de Sudoku
-       *  
+       *
        */
     public static void afficheGrille(int k,int[][] g){
 	//__________________________________________________
@@ -112,7 +112,7 @@ public class SudokuBase {
     //.........................................................................
 
     /** pré-requis : k > 0, 0 <= i< k^2 et 0 <= j < k^2
-     *  résultat : (i,j) étant les coordonnées d'une case d'une grille k^2xk^2 partitionnée 
+     *  résultat : (i,j) étant les coordonnées d'une case d'une grille k^2xk^2 partitionnée
      *             en k sous-carrés kxk, retourne les coordonnées de la case du haut à gauche
      *             du sous-carré de la grille contenant cette case.
      *  Par exemple, si k=3, i=5 et j=7, la fonction retourne (3,6).
@@ -142,7 +142,7 @@ public class SudokuBase {
 
 
     /** pré-requis : gSecret est une grille de Sudoku complète et 0 <= nbTrous <= 81
-     *  résultat :   une grille de Sudoku incomplète pouvant être complétée en gSecret 
+     *  résultat :   une grille de Sudoku incomplète pouvant être complétée en gSecret
      *               et ayant nbTrous trous à des positions aléatoires
      */
     public static int [][] initGrilleIncomplete(int nbTrous, int [][] gSecret){
@@ -163,7 +163,7 @@ public class SudokuBase {
      */
     public static int [][] saisirGrilleIncomplete(int nbTrous){
 	//_________________________________________________
-           
+
     }  // fin saisirGrilleIncomplete
 
     //.........................................................................
@@ -174,7 +174,7 @@ public class SudokuBase {
      *               valPossibles est une matrice 9x9 de tableaux de 10 booléens
      *               et nbValPoss est une matrice 9x9 d'entiers
      *  action : met dans valPossibles l'ensemble des entiers de 1 à 9 pour chaque trou de gOrdi
-     *           et leur nombre dans nbValPoss       
+     *           et leur nombre dans nbValPoss
      */
     public static void initPleines(int [][] gOrdi, boolean[][][] valPossibles, int [][] nbValPoss){
 	//________________________________________________________________________________________________
@@ -203,11 +203,11 @@ public class SudokuBase {
      *               valPossibles est une matrice 9x9 de tableaux de 10 booléens
      *               et nbValPoss est une matrice 9x9 d'entiers
      * action :      met dans valPossibles l'ensemble des valeurs possibles de chaque trou de gOrdi
-     *               et leur nombre dans nbValPoss       
+     *               et leur nombre dans nbValPoss
      */
     public static void initPossibles(int [][] gOrdi, boolean[][][] valPossibles, int [][]nbValPoss){
 	//________________________________________________________________________________________________
-  
+
     }  // fin initPossibles
 
     //.........................................................................
@@ -234,12 +234,12 @@ public class SudokuBase {
     // Tour du joueur humain
     //...........................................................
 
-    /** pré-requis : gHumain est une grille de Sudoju incomplète pouvant se compléter en 
+    /** pré-requis : gHumain est une grille de Sudoju incomplète pouvant se compléter en
      *               la  grille de Sudoku complète gSecret
      *
      *  résultat :   le nombre de points de pénalité pris par le joueur humain pendant le tour de jeu
      *
-     *  action :     effectue un tour du joueur humain   
+     *  action :     effectue un tour du joueur humain
      */
     public static int tourHumain(int [][] gSecret, int [][] gHumain){
 	//___________________________________________________________________
@@ -255,7 +255,7 @@ public class SudokuBase {
      *  résultat :   le premier trou (i,j) de gOrdi (c'est-à-dire tel que gOrdi[i][j]==0)
      *               évident (c'est-à-dire tel que nbValPoss[i][j]==1) dans l'ordre des lignes,
      *                s'il y en a, sinon le premier trou de gOrdi dans l'ordre des lignes
-     * 
+     *
      */
     public static int[] chercheTrou(int[][] gOrdi,int [][]nbValPoss){
 	//___________________________________________________________________
@@ -267,7 +267,7 @@ public class SudokuBase {
     /** pré-requis : gOrdi est une grille de Sudoju incomplète,
      *               valPossibles est une matrice 9x9 de tableaux de 10 booléens
      *               et nbValPoss est une matrice 9x9 d'entiers
-     *  action :     effectue un tour de l'ordinateur      
+     *  action :     effectue un tour de l'ordinateur
      */
     public static int tourOrdinateur(int [][] gOrdi, boolean[][][] valPossibles, int [][]nbValPoss){
 	//________________________________________________________________________________________________
@@ -300,7 +300,7 @@ public class SudokuBase {
      */
     public static void main(String[] args){
 	//________________________________________
-
+        System.out.print("Hello, World:");
     }  // fin main
 
 } // fin SudokuBase
