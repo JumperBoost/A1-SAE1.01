@@ -12,30 +12,28 @@ public class SudokuBase {
      *  résultat :   un entier saisi compris entre min et max, avec re-saisie éventuelle jusqu'à ce qu'il le soit
      */
     public static int saisirEntierMinMax(int min, int max){
-	//________________________________________________________
+        //________________________________________________________
 
     }  // fin saisirEntierMinMax
     //.........................................................................
 
-
-    /** pré-requis : aucun
-     *  résultat : une copie de mat
-     *
+    /** MODIFICI
+     *  pré-requis : mat1 et mat2 ont les mêmes dimensions
+     *  action : copie toutes les valeurs de mat1 dans mat2 de sorte que mat1 et mat2 soient identiques
      */
-    public static int [][] copieMatrice(int [][] mat){
-	//________________________________________________________
+    public static void copieMatrice(int[][] mat1, int[][] mat2){
+        //________________________________________________________
 
     }  // fin copieMatrice
 
     //.........................................................................
-
 
     /** pré-requis :  n >= 0
      *  résultat : un tableau de booléens représentant le sous-ensemble de l'ensemble des entiers
      *             de 1 à n égal à lui-même
      */
     public static boolean[] ensPlein(int n){
-	//_____________________________________
+        //_____________________________________
 
     }  // fin ensPlein
 
@@ -47,7 +45,7 @@ public class SudokuBase {
      *  résultat :   vrai ssi val était dans cet ensemble
      */
     public static boolean supprime(boolean[] ens, int val){
-	//______________________________________________________
+        //______________________________________________________
 
     }  // fin supprime
 
@@ -58,7 +56,7 @@ public class SudokuBase {
      *  résultat :   un élément de cet ensemble
      */
     public static int uneValeur(boolean[] ens){
-	//_____________________________________________
+        //_____________________________________________
 
     }  // fin uneValeur
 
@@ -66,47 +64,47 @@ public class SudokuBase {
 
     /**
 
-       1 2 3 4 5 6 7 8 9
-       -------------------
-       1 |6 2 9|7 8 1|3 4 5|
-       2 |4 7 3|9 6 5|8 1 2|
-       3 |8 1 5|2 4 3|6 9 7|
-       -------------------
-       4 |9 5 8|3 1 2|4 7 6|
-       5 |7 3 2|4 5 6|1 8 9|
-       6| 1 6 4|8 7 9|2 5 3|
-       -------------------
-       7 3 8 1|5 2 7|9 6 4
-       8 |5 9 6|1 3 4|7 2 8|
-       9 |2 4 7|6 9 8|5 3 1|
-       -------------------
+     1 2 3 4 5 6 7 8 9
+     -------------------
+     1 |6 2 9|7 8 1|3 4 5|
+     2 |4 7 3|9 6 5|8 1 2|
+     3 |8 1 5|2 4 3|6 9 7|
+     -------------------
+     4 |9 5 8|3 1 2|4 7 6|
+     5 |7 3 2|4 5 6|1 8 9|
+     6| 1 6 4|8 7 9|2 5 3|
+     -------------------
+     7 3 8 1|5 2 7|9 6 4
+     8 |5 9 6|1 3 4|7 2 8|
+     9 |2 4 7|6 9 8|5 3 1|
+     -------------------
 
 
-       1 2 3 4 5 6 7 8 9
-       -------------------
-       1 |6 0 0|0 0 1|0 4 0|
-       2 |0 0 0|9 6 5|0 1 2|
-       3 |8 1 0|0 4 0|0 0 0|
-       -------------------
-       4 |0 5 0|3 0 2|0 7 0|
-       5 |7 0 0|0 0 0|1 8 9|
-       6||0 0 0|0 7 0|0 0 3|
-       -------------------
-       7 |3 0 0|0 2 0|9 0 4|
-       8 |0 9 0|0 0 0|7 2 0|
-       9 |2 4 0|6 9 0|0 0 0|
-       -------------------
+     1 2 3 4 5 6 7 8 9
+     -------------------
+     1 |6 0 0|0 0 1|0 4 0|
+     2 |0 0 0|9 6 5|0 1 2|
+     3 |8 1 0|0 4 0|0 0 0|
+     -------------------
+     4 |0 5 0|3 0 2|0 7 0|
+     5 |7 0 0|0 0 0|1 8 9|
+     6||0 0 0|0 7 0|0 0 3|
+     -------------------
+     7 |3 0 0|0 2 0|9 0 4|
+     8 |0 9 0|0 0 0|7 2 0|
+     9 |2 4 0|6 9 0|0 0 0|
+     -------------------
 
 
-       * pré-requis : 0<=k<=3 et g est une grille k^2xk^2 dont les valeurs sont comprises
-       *              entre 0 et k^2 et qui est partitionnée en k sous-carrés kxk
-       * action : affiche la  grille g avec ses sous-carrés et avec les numéros des lignes
-       *          et des colonnes de 1 à k^2.
-       * Par exemple, pour k = 3, on obtient le dessin d'une grille de Sudoku
-       *
-       */
+     * pré-requis : 0<=k<=3 et g est une grille k^2xk^2 dont les valeurs sont comprises
+     *              entre 0 et k^2 et qui est partitionnée en k sous-carrés kxk
+     * action : affiche la  grille g avec ses sous-carrés et avec les numéros des lignes
+     *          et des colonnes de 1 à k^2.
+     * Par exemple, pour k = 3, on obtient le dessin d'une grille de Sudoku
+     *
+     */
     public static void afficheGrille(int k,int[][] g){
-	//__________________________________________________
+        //__________________________________________________
 
     } // fin afficheGrille
     //.........................................................................
@@ -118,7 +116,7 @@ public class SudokuBase {
      *  Par exemple, si k=3, i=5 et j=7, la fonction retourne (3,6).
      */
     public static int[] debCarre(int k,int i,int j){
-	//__________________________________________________
+        //__________________________________________________
 
     }  // fin debCarre
 
@@ -128,26 +126,25 @@ public class SudokuBase {
     // Initialisation
     //.........................................................................
 
-
-    /** pré-requis : aucun
-     *  résultat :   une grille de Sudoku complète
-     *  stratégie :  les valeurs sont données dans le code
+    /** MODIFICI
+     *  pré-requis : gComplete est une matrice 9X9
+     *  action   :   remplit gComplete pour que la grille de Sudoku correspondante soit complète
+     *  stratégie :  les valeurs sont données directement dans le code et on peut utiliser copieMatrice pour mettre à jour gComplete
      */
-    public static int [][] initGrilleComplete(){
-	//_________________________________________________
+    public static void initGrilleComplete(int [][] gComplete){
+        //_________________________________________________
 
     } // fin initGrilleComplete
 
     //.........................................................................
 
-
-    /** pré-requis : gSecret est une grille de Sudoku complète et 0 <= nbTrous <= 81
-     *  résultat :   une grille de Sudoku incomplète pouvant être complétée en gSecret
-     *               et ayant nbTrous trous à des positions aléatoires
+    /** MODIFICI
+     *  pré-requis : gSecret est une grille de Sudoku complète de mêmes dimensions que gIncomplete et 0 <= nbTrous <= 81
+     *  action :     modifie gIncomplete pour qu'elle corresponde à une version incomplète de la grille de Sudoku gSecret (gIncomplete peut être complétée en gSecret),
+     *               avec nbTrous trous à des positions aléatoires
      */
-    public static int [][] initGrilleIncomplete(int nbTrous, int [][] gSecret){
-	//___________________________________________________________________________
-
+    public static void initGrilleIncomplete(int nbTrous, int [][] gSecret, int[][] gIncomplete){
+        //___________________________________________________________________________
 
     } // fin initGrilleIncomplete
 
@@ -162,7 +159,7 @@ public class SudokuBase {
      *  stratégie : utilise la fonction saisirEntierMinMax
      */
     public static int [][] saisirGrilleIncomplete(int nbTrous){
-	//_________________________________________________
+        //_________________________________________________
 
     }  // fin saisirGrilleIncomplete
 
@@ -177,7 +174,7 @@ public class SudokuBase {
      *           et leur nombre dans nbValPoss
      */
     public static void initPleines(int [][] gOrdi, boolean[][][] valPossibles, int [][] nbValPoss){
-	//________________________________________________________________________________________________
+        //________________________________________________________________________________________________
 
     }  // fin initPleines
 
@@ -192,7 +189,7 @@ public class SudokuBase {
      *           de la colonne et du carré contenant la case (i,j) correspondant à un trou de gOrdi.
      */
     public static void suppValPoss(int [][] gOrdi, int i, int j, boolean[][][] valPossibles, int [][]nbValPoss){
-	//_____________________________________________________________________________________________________________
+        //_____________________________________________________________________________________________________________
 
     }  // fin suppValPoss
 
@@ -206,7 +203,7 @@ public class SudokuBase {
      *               et leur nombre dans nbValPoss
      */
     public static void initPossibles(int [][] gOrdi, boolean[][][] valPossibles, int [][]nbValPoss){
-	//________________________________________________________________________________________________
+        //________________________________________________________________________________________________
 
     }  // fin initPossibles
 
@@ -214,21 +211,20 @@ public class SudokuBase {
 
 
     /** pré-requis : gSecret, gHumain et gOrdi sont des grilles 9x9
-     *  action :     demande au joueur humain de saisir le nombre nbTrous compris entre 0 et 81,
-     *               met dans gSecret une grille de Sudoku complète,
-     *               met dans gHumain une grille de Sudoku incomplète, pouvant être complétée en gSecret
-     *               et ayant exactement nbTrous trous de positions aléatoires,
-     *               met dans gOrdi une grille de Sudoku incomplète saisie par le joueur humain
-     *               ayant  nbTrous trous,
-     *               met dans valPossibles l'ensemble des valeurs possibles de chaque trou de gOrdi
-     *               et leur nombre dans nbValPoss.
+     *  action :     - demande au joueur humain de saisir le nombre nbTrous compris entre 0 et 81,
+     *               - met dans gSecret une grille de Sudoku complète,
+     *               - met dans gHumain une grille de Sudoku incomplète, pouvant être complétée en gSecret
+     *                  et ayant exactement nbTrous trous de positions aléatoires,
+     *               - met dans gOrdi une grille de Sudoku incomplète saisie par le joueur humain
+     *                  ayant  nbTrous trous,
+     *               - met dans valPossibles l'ensemble des valeurs possibles de chaque trou de gOrdi
+     *                  et leur nombre dans nbValPoss.
      * retour : la valeur de nbTrous
      */
-    public static int initPartie(int [][] gSecret, int [][] gHumain, int [][] gOrdi,
-				 boolean[][][] valPossibles, int [][]nbValPoss){
-	//______________________________________________________________________________________________
+    public static int initPartie(int [][] gSecret, int [][] gHumain, int [][] gOrdi, boolean[][][] valPossibles, int [][]nbValPoss){
+        //______________________________________________________________________________________________
 
-    }  // fin initPartie
+    }
 
     //...........................................................
     // Tour du joueur humain
@@ -242,7 +238,7 @@ public class SudokuBase {
      *  action :     effectue un tour du joueur humain
      */
     public static int tourHumain(int [][] gSecret, int [][] gHumain){
-	//___________________________________________________________________
+        //___________________________________________________________________
 
     }  // fin  tourHumain
 
@@ -258,7 +254,7 @@ public class SudokuBase {
      *
      */
     public static int[] chercheTrou(int[][] gOrdi,int [][]nbValPoss){
-	//___________________________________________________________________
+        //___________________________________________________________________
 
     }  // fin chercheTrou
 
@@ -270,7 +266,7 @@ public class SudokuBase {
      *  action :     effectue un tour de l'ordinateur
      */
     public static int tourOrdinateur(int [][] gOrdi, boolean[][][] valPossibles, int [][]nbValPoss){
-	//________________________________________________________________________________________________
+        //________________________________________________________________________________________________
 
     }  // fin tourOrdinateur
 
@@ -279,17 +275,16 @@ public class SudokuBase {
     // Partie
     //.........................................................................
 
-
-
     /** pré-requis : aucun
-     *  action :     effectue une partie de Sudoku entre le joueur humain et l'ordinateur
+     *
+     *  action : crée et initialise les matrices utilisées dans une partie, et effectue une partie de Sudoku entre le joueur humain et l'ordinateur.
+     *
      *  résultat :   0 s'il y a match nul, 1 si c'est le joueur humain qui gagne et 2 sinon
      */
     public static int partie(){
-	//_____________________________
+        //_____________________________
 
     }  // fin partie
-
 
     //.........................................................................
 
@@ -299,7 +294,7 @@ public class SudokuBase {
      *               et affiche qui a gagné
      */
     public static void main(String[] args){
-	//________________________________________
+        //________________________________________
 
     }  // fin main
 
