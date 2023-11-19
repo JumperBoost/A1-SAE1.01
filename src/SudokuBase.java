@@ -1,10 +1,10 @@
-import java.util.*;
 import java.lang.*;
 
 public class SudokuBase {
 
-    private int nbTrous;
-    private int[][] gSecret, gHumain;
+    private static int nbTrous;
+    private static int[][] gSecret, gHumain;
+    private static int[][] gOrdi;
 
     //.........................................................................
     // Fonctions utiles
@@ -16,7 +16,10 @@ public class SudokuBase {
      */
     public static int saisirEntierMinMax(int min, int max){
         //________________________________________________________
-        
+        int entier = Ut.saisirEntier();
+        if(entier < min  || entier > max)
+            return saisirEntierMinMax(min, max);
+        return entier;
     }  // fin saisirEntierMinMax
     //.........................................................................
 
@@ -26,7 +29,11 @@ public class SudokuBase {
      */
     public static void copieMatrice(int[][] mat1, int[][] mat2){
         //________________________________________________________
-
+        for(int i = 0; i < mat1.length; i++) {
+            for(int j = 0; j < mat1[i].length; j++) {
+                mat2[i][j] = mat1[i][j];
+            }
+        }
     }  // fin copieMatrice
 
     //.........................................................................
@@ -37,7 +44,11 @@ public class SudokuBase {
      */
     public static boolean[] ensPlein(int n){
         //_____________________________________
-
+        boolean[] ensemble = new boolean[n+1];
+        for(int i = 0; i < n+1; i++) {
+            ensemble[i] = true;
+        }
+        return ensemble;
     }  // fin ensPlein
 
     //.........................................................................
@@ -49,7 +60,10 @@ public class SudokuBase {
      */
     public static boolean supprime(boolean[] ens, int val){
         //______________________________________________________
-
+        if(ens[val]) {
+            ens[val] = false;
+            return true;
+        } else return false;
     }  // fin supprime
 
     //.........................................................................
@@ -60,7 +74,11 @@ public class SudokuBase {
      */
     public static int uneValeur(boolean[] ens){
         //_____________________________________________
-
+        for(int i = 1; i < ens.length; i++) {
+            if(ens[i])
+                return i;
+        }
+        return 0;
     }  // fin uneValeur
 
     //.........................................................................
@@ -112,7 +130,7 @@ public class SudokuBase {
     } // fin afficheGrille
     //.........................................................................
 
-    /** pré-requis : k > 0, 0 <= i< k^2 et 0 <= j < k^2
+    /** pré-requis : k > 0, 0 <= i < k^2 et 0 <= j < k^2
      *  résultat : (i,j) étant les coordonnées d'une case d'une grille k^2xk^2 partitionnée
      *             en k sous-carrés kxk, retourne les coordonnées de la case du haut à gauche
      *             du sous-carré de la grille contenant cette case.
@@ -120,12 +138,14 @@ public class SudokuBase {
      */
     public static int[] debCarre(int k,int i,int j) {
         //__________________________________________________
-
+        int[] coord = new int[2];
+        coord[0] = (i / k) * k;
+        coord[1] = (j / k) * k;
+        return coord;
     }  // fin debCarre
 
 
     //.........................................................................
-
     // Initialisation
     //.........................................................................
 
@@ -136,27 +156,29 @@ public class SudokuBase {
      */
     public static void initGrilleComplete(int [][] gComplete){
         //_________________________________________________
-        gComplete[0] = new int[]{6, 2, 9, 7, 8, 1, 3, 4, 5};
-        gComplete[1] = new int[]{4, 7, 3, 9, 6, 5, 8, 1, 2};
-        gComplete[2] = new int[]{8, 1, 5, 2, 4, 3, 6, 9, 7};
-        gComplete[3] = new int[]{9, 5, 8, 3, 1, 2, 1, 8, 9};
-        gComplete[4] = new int[]{7, 3, 2, 4, 5, 6, 1, 8, 9};
-        gComplete[5] = new int[]{1, 6, 4, 8, 7, 9, 2, 5, 3};
-        gComplete[6] = new int[]{3, 8, 1, 5, 2, 7, 9, 6, 4};
-        gComplete[7] = new int[]{5, 9, 6, 1, 3, 4, 7, 2, 8};
-        gComplete[8] = new int[]{2, 4, 7, 6, 9, 8, 5, 3, 1};
+        gSecret = new int[9][9];
+        gSecret[0] = new int[]{6, 2, 9, 7, 8, 1, 3, 4, 5};
+        gSecret[1] = new int[]{4, 7, 3, 9, 6, 5, 8, 1, 2};
+        gSecret[2] = new int[]{8, 1, 5, 2, 4, 3, 6, 9, 7};
+        gSecret[3] = new int[]{9, 5, 8, 3, 1, 2, 1, 8, 9};
+        gSecret[4] = new int[]{7, 3, 2, 4, 5, 6, 1, 8, 9};
+        gSecret[5] = new int[]{1, 6, 4, 8, 7, 9, 2, 5, 3};
+        gSecret[6] = new int[]{3, 8, 1, 5, 2, 7, 9, 6, 4};
+        gSecret[7] = new int[]{5, 9, 6, 1, 3, 4, 7, 2, 8};
+        gSecret[8] = new int[]{2, 4, 7, 6, 9, 8, 5, 3, 1};
+        copieMatrice(gSecret, gComplete);
     } // fin initGrilleComplete
 
     //.........................................................................
 
     /** MODIFICI
-     *  pré-requis : gSecret est une grille de Sudoku complète de mêmes dimensions que gIncomplete et 0 <= nbTrous <= 81
+     *  pré-requis : _gSecret est une grille de Sudoku complète de mêmes dimensions que gIncomplete et 0 <= nbTrous <= 81
      *  action :     modifie gIncomplete pour qu'elle corresponde à une version incomplète de la grille de Sudoku gSecret (gIncomplete peut être complétée en gSecret),
      *               avec nbTrous trous à des positions aléatoires
      */
-    public static void initGrilleIncomplete(int nbTrous, int [][] gSecret, int[][] gIncomplete){
+    public static void initGrilleIncomplete(int nbTrous, int [][] _gSecret, int[][] gIncomplete){
         //___________________________________________________________________________
-        gIncomplete = gSecret;
+        gIncomplete = _gSecret;
         while(nbTrous > 0) {
             int x = Ut.randomMinMax(0, 8);
             int y = Ut.randomMinMax(0, 8);
@@ -166,6 +188,8 @@ public class SudokuBase {
                 nbTrous--;
             }
         }
+        gSecret = _gSecret;
+        gOrdi = gIncomplete;
     } // fin initGrilleIncomplete
 
     //.........................................................................
@@ -180,13 +204,21 @@ public class SudokuBase {
      */
     public static int [][] saisirGrilleIncomplete(int nbTrous){
         //_________________________________________________
+        int nbGrilleSaisieTrous = 0;
         int[][] grilleSaisie = new int[9][9];
-        for(int i = 0; i < grilleSaisie.length; i++) {
-            for(int j = 0; j < grilleSaisie[i].length; j++) {
-                int chiffre = saisirEntierMinMax(1, 9);
-
+        while (nbGrilleSaisieTrous < nbTrous) {
+            nbGrilleSaisieTrous = 0;
+            grilleSaisie = new int[9][9];
+            for (int i = 0; i < grilleSaisie.length; i++) {
+                for (int j = 0; j < grilleSaisie[i].length; j++) {
+                    int chiffre = saisirEntierMinMax(0, 9);
+                    if(chiffre == 0)
+                        nbGrilleSaisieTrous++;
+                    grilleSaisie[i][j] = chiffre;
+                }
             }
         }
+        return grilleSaisie;
     }  // fin saisirGrilleIncomplete
 
     //.........................................................................
@@ -201,7 +233,12 @@ public class SudokuBase {
      */
     public static void initPleines(int [][] gOrdi, boolean[][][] valPossibles, int [][] nbValPoss){
         //________________________________________________________________________________________________
-
+        for(int i = 0; i < gOrdi.length; i++) {
+            for(int j = 0; j < gOrdi[i].length; j++) {
+                valPossibles[i][j] = ensPlein(9);
+                nbValPoss[i][j] = 9;
+            }
+        }
     }  // fin initPleines
 
     //.........................................................................
@@ -269,7 +306,6 @@ public class SudokuBase {
     }  // fin  tourHumain
 
     //.........................................................................
-
     // Tour de l'ordinateur
     //.........................................................................
 
