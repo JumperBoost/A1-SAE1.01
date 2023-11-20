@@ -2,10 +2,6 @@ import java.lang.*;
 
 public class SudokuBase {
 
-    private static int nbTrous;
-    private static int[][] gSecret, gHumain;
-    private static int[][] gOrdi;
-
     //.........................................................................
     // Fonctions utiles
     //.........................................................................
@@ -156,17 +152,15 @@ public class SudokuBase {
      */
     public static void initGrilleComplete(int [][] gComplete){
         //_________________________________________________
-        gSecret = new int[9][9];
-        gSecret[0] = new int[]{6, 2, 9, 7, 8, 1, 3, 4, 5};
-        gSecret[1] = new int[]{4, 7, 3, 9, 6, 5, 8, 1, 2};
-        gSecret[2] = new int[]{8, 1, 5, 2, 4, 3, 6, 9, 7};
-        gSecret[3] = new int[]{9, 5, 8, 3, 1, 2, 1, 8, 9};
-        gSecret[4] = new int[]{7, 3, 2, 4, 5, 6, 1, 8, 9};
-        gSecret[5] = new int[]{1, 6, 4, 8, 7, 9, 2, 5, 3};
-        gSecret[6] = new int[]{3, 8, 1, 5, 2, 7, 9, 6, 4};
-        gSecret[7] = new int[]{5, 9, 6, 1, 3, 4, 7, 2, 8};
-        gSecret[8] = new int[]{2, 4, 7, 6, 9, 8, 5, 3, 1};
-        copieMatrice(gSecret, gComplete);
+        gComplete[0] = new int[]{6, 2, 9, 7, 8, 1, 3, 4, 5};
+        gComplete[1] = new int[]{4, 7, 3, 9, 6, 5, 8, 1, 2};
+        gComplete[2] = new int[]{8, 1, 5, 2, 4, 3, 6, 9, 7};
+        gComplete[3] = new int[]{9, 5, 8, 3, 1, 2, 1, 8, 9};
+        gComplete[4] = new int[]{7, 3, 2, 4, 5, 6, 1, 8, 9};
+        gComplete[5] = new int[]{1, 6, 4, 8, 7, 9, 2, 5, 3};
+        gComplete[6] = new int[]{3, 8, 1, 5, 2, 7, 9, 6, 4};
+        gComplete[7] = new int[]{5, 9, 6, 1, 3, 4, 7, 2, 8};
+        gComplete[8] = new int[]{2, 4, 7, 6, 9, 8, 5, 3, 1};
     } // fin initGrilleComplete
 
     //.........................................................................
@@ -176,9 +170,9 @@ public class SudokuBase {
      *  action :     modifie gIncomplete pour qu'elle corresponde à une version incomplète de la grille de Sudoku gSecret (gIncomplete peut être complétée en gSecret),
      *               avec nbTrous trous à des positions aléatoires
      */
-    public static void initGrilleIncomplete(int nbTrous, int [][] _gSecret, int[][] gIncomplete){
+    public static void initGrilleIncomplete(int nbTrous, int [][] gSecret, int[][] gIncomplete){
         //___________________________________________________________________________
-        gIncomplete = _gSecret;
+        gIncomplete = gSecret;
         while(nbTrous > 0) {
             int x = Ut.randomMinMax(0, 8);
             int y = Ut.randomMinMax(0, 8);
@@ -188,8 +182,6 @@ public class SudokuBase {
                 nbTrous--;
             }
         }
-        gSecret = _gSecret;
-        gOrdi = gIncomplete;
     } // fin initGrilleIncomplete
 
     //.........................................................................
@@ -345,6 +337,9 @@ public class SudokuBase {
      */
     public static int partie(){
         //_____________________________
+        int nbTrous;
+        int[][] gSecret, gHumain;
+        int[][] gOrdi;
 
     }  // fin partie
 
