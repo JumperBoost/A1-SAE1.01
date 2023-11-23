@@ -41,7 +41,7 @@ public class SudokuBase {
     public static boolean[] ensPlein(int n){
         //_____________________________________
         boolean[] ensemble = new boolean[n+1];
-        for(int i = 0; i < n+1; i++) {
+        for(int i = 0; i <= n; i++) {
             ensemble[i] = true;
         }
         return ensemble;
@@ -244,7 +244,34 @@ public class SudokuBase {
      */
     public static void suppValPoss(int [][] gOrdi, int i, int j, boolean[][][] valPossibles, int [][]nbValPoss){
         //_____________________________________________________________________________________________________________
+        int chiffreASupprimer = gOrdi[i][j];
 
+        // Sous-carré
+        int[] debCarre = debCarre(3, i, j);
+        for(int x = debCarre[0]; x < debCarre[0] + 3; x++) {
+            for(int y = debCarre[1]; y < debCarre[1] + 3; y++) {
+                valPossibles[x][y][chiffreASupprimer] = false;
+                nbValPoss[x][y]--;
+            }
+        }
+
+        // Ligne
+        for(int y = 0; y < 9; y++) {
+            int[] debCarreY = debCarre(3, i, y);
+            if(debCarreY != debCarre) {
+                valPossibles[i][y][chiffreASupprimer] = false;
+                nbValPoss[i][y]--;
+            }
+        }
+
+        // Colonne
+        for(int x = 0; x < 9; x++) {
+            int[] debCarreX = debCarre(3, x, j);
+            if(debCarreX != debCarre) {
+                valPossibles[x][j][chiffreASupprimer] = false;
+                nbValPoss[x][j]--;
+            }
+        }
     }  // fin suppValPoss
 
 
@@ -258,7 +285,14 @@ public class SudokuBase {
      */
     public static void initPossibles(int [][] gOrdi, boolean[][][] valPossibles, int [][]nbValPoss){
         //________________________________________________________________________________________________
-
+        initPleines(gOrdi, valPossibles, nbValPoss);
+        for(int i = 0; i < gOrdi.length; i++) {
+            for(int j = 0; j < gOrdi[i].length; j++) {
+                if (gOrdi[i][j] != 0) {
+                    suppValPoss(gOrdi, i, j, valPossibles, nbValPoss);
+                }
+            }
+        }
     }  // fin initPossibles
 
     //.........................................................................
@@ -308,7 +342,22 @@ public class SudokuBase {
      */
     public static int[] chercheTrou(int[][] gOrdi,int [][]nbValPoss){
         //___________________________________________________________________
-
+        int[] premierTrou = new int[]{-1, -1};
+        for(int i = 0; i < gOrdi.length; i++) {
+            for(int j = 0; j < gOrdi[i].length; j++) {
+                if(gOrdi[i][j] == 0) {
+                    // Préciser le premier trou si nécessaire
+                    if(premierTrou[0] == -1) {
+                        premierTrou[0] = i;
+                        premierTrou[1] = j;
+                    }
+                    // Vérifier si c'est un trou évident
+                    if(nbValPoss[i][j] == 1)
+                        return new int[]{i, j};
+                }
+            }
+        }
+        return premierTrou;
     }  // fin chercheTrou
 
     //.........................................................................
