@@ -105,7 +105,7 @@ public class SudokuBase {
      -------------------
      4 |0 5 0|3 0 2|0 7 0|
      5 |7 0 0|0 0 0|1 8 9|
-     6||0 0 0|0 7 0|0 0 3|
+     6 |0 0 0|0 7 0|0 0 3|
      -------------------
      7 |3 0 0|0 2 0|9 0 4|
      8 |0 9 0|0 0 0|7 2 0|
@@ -122,7 +122,22 @@ public class SudokuBase {
      */
     public static void afficheGrille(int k,int[][] g){
         //__________________________________________________
-
+        Ut.afficherSL("   1 2 3|4 5 6|7 8 9");
+        int n = 1;
+        // Afficher k blocs de sous-carrés
+        for(int i = 0; i < k; i++) {
+            Ut.afficherSL("—".repeat(21));
+            // Afficher une ligne
+            for(int j = 0; j < k; j++) {
+                Ut.afficher(n + " |");
+                for(int m = 0; m < k; m++) {
+                    Ut.afficher(g[n-1][j*k] + " " + g[n-1][j*k+1] + " " + g[n-1][j*k + 2] + "|");
+                }
+                Ut.sauterALaLigne();
+                n++;
+            }
+        }
+        Ut.afficherSL("—".repeat(21));
     } // fin afficheGrille
     //.........................................................................
 
@@ -172,16 +187,18 @@ public class SudokuBase {
      */
     public static void initGrilleIncomplete(int nbTrous, int [][] gSecret, int[][] gIncomplete){
         //___________________________________________________________________________
-        gIncomplete = gSecret;
+        int[][] grille = new int[gSecret.length][gSecret[0].length];
+        copieMatrice(gSecret, grille);
         while(nbTrous > 0) {
             int x = Ut.randomMinMax(0, 8);
             int y = Ut.randomMinMax(0, 8);
 
-            if(gIncomplete[x][y] != 0) {
-                gIncomplete[x][y] = 0;
+            if(grille[x][y] != 0) {
+                grille[x][y] = 0;
                 nbTrous--;
             }
         }
+        copieMatrice(grille, gIncomplete);
     } // fin initGrilleIncomplete
 
     //.........................................................................
@@ -400,7 +417,6 @@ public class SudokuBase {
      */
     public static void main(String[] args){
         //________________________________________
-
     }  // fin main
 
 } // fin SudokuBase
