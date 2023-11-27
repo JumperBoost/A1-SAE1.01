@@ -13,8 +13,10 @@ public class SudokuBase {
     public static int saisirEntierMinMax(int min, int max){
         //________________________________________________________
         int entier = Ut.saisirEntier();
-        if(entier < min  || entier > max)
+        if(entier < min  || entier > max) {
+            Ut.afficher("Impossible, veuillez réessayer: ");
             return saisirEntierMinMax(min, max);
+        }
         return entier;
     }  // fin saisirEntierMinMax
     //.........................................................................
@@ -220,12 +222,19 @@ public class SudokuBase {
             g = new int[9][9];
             for (int i = 0; i < g.length; i++) {
                 for (int j = 0; j < g[i].length; j++) {
+                    afficheGrille(3, g);
+                    Ut.afficher("Indiquer le chiffre en position (" + i + "," + j + "): ");
                     int chiffre = saisirEntierMinMax(0, 9);
                     if(chiffre == 0)
                         nbGrilleSaisieTrous++;
                     g[i][j] = chiffre;
                 }
             }
+
+            Ut.clearConsole();
+            afficheGrille(3, g);
+            if(nbGrilleSaisieTrous != nbTrous)
+                Ut.afficherSL("Impossible, veuillez re-saisir la grille.");
         }
     }  // fin saisirGrilleIncomplete
 
@@ -328,7 +337,14 @@ public class SudokuBase {
      */
     public static int initPartie(int [][] gSecret, int [][] gHumain, int [][] gOrdi, boolean[][][] valPossibles, int [][]nbValPoss){
         //______________________________________________________________________________________________
-
+        Ut.afficher("Veuillez saisir un nombre de trous entre 0 et 81: ");
+        int nbTrous = saisirEntierMinMax(0, 81);
+        initGrilleComplete(gSecret);
+        initGrilleIncomplete(nbTrous, gSecret, gHumain);
+        initPleines(gOrdi, valPossibles, nbValPoss);
+        saisirGrilleIncomplete(nbTrous, gOrdi);
+        initPossibles(gOrdi, valPossibles, nbValPoss);
+        return nbTrous;
     }
 
     //...........................................................
@@ -344,7 +360,30 @@ public class SudokuBase {
      */
     public static int tourHumain(int [][] gSecret, int [][] gHumain){
         //___________________________________________________________________
-
+        int penalites = 0;
+        boolean fin = false;
+        while (!fin) {
+            afficheGrille(3, gHumain);
+            Ut.afficher("Veuillez saisir la coordonnée x (ordonnée): ");
+            int x = saisirEntierMinMax(1, 9);
+            Ut.afficher("Veuillez saisir la coordonnée y (abscisse): ");
+            int y = saisirEntierMinMax(1, 9);
+            Ut.afficherSL("Vous venez de choisir la case (" + x + "," + y + ") de valeur " + gHumain[x][y]);
+            Ut.afficher("Veuillez saisir le chiffre à jouer (1-9 ou 0 pour Joker): ");
+            int chiffre = saisirEntierMinMax(0, 9);
+            if(chiffre == 0) {
+                Ut.afficherSL("Vous avez demandé un Joker. Le chiffre était le " + gSecret[x][y] + " (+1 pt de pénalité)");
+                gHumain[x][y] = gSecret[x][y];
+                penalites++;
+            } else if(chiffre == gSecret[x][y]) {
+                Ut.afficherSL("Bravo, le chiffre était bien le " + chiffre);
+                fin = true;
+            } else {
+                Ut.afficherSL("Dommage, ce n'est pas le bon chiffre (+1 pt de pénalité)");
+                penalites++;
+            }
+        }
+        return penalites;
     }  // fin  tourHumain
 
     //.........................................................................
@@ -386,7 +425,22 @@ public class SudokuBase {
      */
     public static int tourOrdinateur(int [][] gOrdi, boolean[][][] valPossibles, int [][]nbValPoss){
         //________________________________________________________________________________________________
-
+        int[] trou = chercheTrou(gOrdi, nbValPoss);
+        if(nbValPoss[trou[0]][trou[1]] == 1) {
+            // Trou évident
+            gOrdi[trou[0]][trou[1]] = uneValeur(valPossibles[trou[0]][trou[1]]);
+            suppValPoss(gOrdi, trou[0], trou[1], valPossibles, nbValPoss);
+            return 0;
+        } else {
+            // Joker
+            afficheGrille(3, gOrdi);
+            Ut.afficherSL("L'ordinateur demande un Joker pour la case (" + trou[0] + "," + trou[1] + ")");
+            Ut.afficher("Veuillez saisir le chiffre correspondant à cette case: ");
+            int chiffre = saisirEntierMinMax(1, 9);
+            gOrdi[trou[0]][trou[1]] = chiffre;
+            suppValPoss(gOrdi, trou[0], trou[1], valPossibles, nbValPoss);
+            return 1;
+        }
     }  // fin tourOrdinateur
 
     //.........................................................................
@@ -403,9 +457,13 @@ public class SudokuBase {
     public static int partie(){
         //_____________________________
         int nbTrous;
-        int[][] gSecret, gHumain;
-        int[][] gOrdi;
+        int[][] gSecret = new int[9][9], gHumain = new int[9][9];
+        int[][] gOrdi = new int[9][9];
+        int[][] nbValPoss = new int[9][ç];
+        boolean[][][] valPossibles = new boolean[9][9][10];
 
+        initPartie(gSecret, gHumain, gOrdi, valPossibles, nbValPoss);
+        // Continuer partie ici
     }  // fin partie
 
     //.........................................................................
