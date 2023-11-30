@@ -125,15 +125,15 @@ public class SudokuBase {
     public static void afficheGrille(int k,int[][] g){
         //__________________________________________________
         Ut.afficherSL("   1 2 3|4 5 6|7 8 9");
-        int n = 1;
+        int n = 0;
         // Afficher k blocs de sous-carrés
         for(int i = 0; i < k; i++) {
             Ut.afficherSL("—".repeat(21));
             // Afficher une ligne
             for(int j = 0; j < k; j++) {
-                Ut.afficher(n + " |");
+                Ut.afficher((n+1) + " |");
                 for(int m = 0; m < k; m++) {
-                    Ut.afficher(g[n-1][j*k] + " " + g[n-1][j*k+1] + " " + g[n-1][j*k + 2] + "|");
+                    Ut.afficher(g[n][k*m] + " " + g[n][k*m+1] + " " + g[n][k*m+2] + "|");
                 }
                 Ut.sauterALaLigne();
                 n++;
@@ -223,7 +223,7 @@ public class SudokuBase {
             for (int i = 0; i < g.length; i++) {
                 for (int j = 0; j < g[i].length; j++) {
                     afficheGrille(3, g);
-                    Ut.afficher("Indiquer le chiffre en position (" + i + "," + j + "): ");
+                    Ut.afficher("Indiquer le chiffre en position (" + (i+1) + "," + (j+1) + "): ");
                     int chiffre = saisirEntierMinMax(0, 9);
                     if(chiffre == 0)
                         nbGrilleSaisieTrous++;
@@ -342,7 +342,18 @@ public class SudokuBase {
         initGrilleComplete(gSecret);
         initGrilleIncomplete(nbTrous, gSecret, gHumain);
         initPleines(gOrdi, valPossibles, nbValPoss);
-        saisirGrilleIncomplete(nbTrous, gOrdi);
+
+        //saisirGrilleIncomplete(nbTrous, gOrdi);
+        gOrdi[0] = new int[]{6, 0, 0, 0, 0, 1, 0, 4, 0};
+        gOrdi[1] = new int[]{0, 0, 0, 9, 6, 5, 0, 1, 2};
+        gOrdi[2] = new int[]{8, 1, 0, 0, 4, 0, 0, 0, 0};
+        gOrdi[3] = new int[]{0, 5, 0, 3, 0, 2, 0, 7, 0};
+        gOrdi[4] = new int[]{7, 0, 0, 0, 0, 0, 1, 8, 9};
+        gOrdi[5] = new int[]{0, 0, 0, 0, 7, 0, 0, 0, 3};
+        gOrdi[6] = new int[]{3, 0, 0, 0, 2, 0, 9, 0, 4};
+        gOrdi[7] = new int[]{0, 9, 0, 0, 0, 0, 7, 2, 0};
+        gOrdi[8] = new int[]{2, 4, 0, 6, 9, 0, 0, 0, 0};
+
         initPossibles(gOrdi, valPossibles, nbValPoss);
         return nbTrous;
     }
@@ -365,18 +376,20 @@ public class SudokuBase {
         while (!fin) {
             afficheGrille(3, gHumain);
             Ut.afficher("Veuillez saisir la coordonnée x (ordonnée): ");
-            int x = saisirEntierMinMax(1, 9);
+            int x = saisirEntierMinMax(1, 9) - 1;
             Ut.afficher("Veuillez saisir la coordonnée y (abscisse): ");
-            int y = saisirEntierMinMax(1, 9);
-            Ut.afficherSL("Vous venez de choisir la case (" + x + "," + y + ") de valeur " + gHumain[x][y]);
+            int y = saisirEntierMinMax(1, 9) - 1;
+            Ut.afficherSL("Vous venez de choisir la case (" + (x+1) + "," + (y+1) + ")");
             Ut.afficher("Veuillez saisir le chiffre à jouer (1-9 ou 0 pour Joker): ");
             int chiffre = saisirEntierMinMax(0, 9);
             if(chiffre == 0) {
                 Ut.afficherSL("Vous avez demandé un Joker. Le chiffre était le " + gSecret[x][y] + " (+1 pt de pénalité)");
                 gHumain[x][y] = gSecret[x][y];
                 penalites++;
+                fin = true;
             } else if(chiffre == gSecret[x][y]) {
                 Ut.afficherSL("Bravo, le chiffre était bien le " + chiffre);
+                gHumain[x][y] = chiffre;
                 fin = true;
             } else {
                 Ut.afficherSL("Dommage, ce n'est pas le bon chiffre (+1 pt de pénalité)");
@@ -456,14 +469,35 @@ public class SudokuBase {
      */
     public static int partie(){
         //_____________________________
-        int nbTrous;
         int[][] gSecret = new int[9][9], gHumain = new int[9][9];
         int[][] gOrdi = new int[9][9];
-        int[][] nbValPoss = new int[9][ç];
+        int[][] nbValPoss = new int[9][9];
         boolean[][][] valPossibles = new boolean[9][9][10];
 
-        initPartie(gSecret, gHumain, gOrdi, valPossibles, nbValPoss);
-        // Continuer partie ici
+        int nbTrous = initPartie(gSecret, gHumain, gOrdi, valPossibles, nbValPoss);
+        int nbTrousH = nbTrous, nbTrousO = nbTrous;
+        int penalitesH = 0, penalitesO = 0;
+        // Faire jouer chaque tour
+        while(nbTrousH > 0 && nbTrousO > 0) {
+            Ut.clearConsole();
+            Ut.afficherSL("C'est au tour du joueur");
+            penalitesH += tourHumain(gSecret, gHumain);
+            if(nbTrousH > 0) {
+                Ut.afficherSL("C'est au tour de l'ordinateur");
+                penalitesO += tourOrdinateur(gOrdi, valPossibles, nbValPoss);
+            }
+        }
+        // Vérifier le vainqueur
+        if(penalitesH < penalitesO) {
+            // Le vainqueur est l'humain
+            return 1;
+        } else if(penalitesO < penalitesH) {
+            // Le vainqueur est l'ordinateur
+            return 2;
+        } else {
+            // Aucun vainqueur, match nul
+            return 0;
+        }
     }  // fin partie
 
     //.........................................................................
@@ -475,6 +509,14 @@ public class SudokuBase {
      */
     public static void main(String[] args){
         //________________________________________
+        int vainqueur = partie();
+        if(vainqueur == 0) {
+            Ut.afficherSL("Match nul. Il n'y a aucun vainqueur.");
+        } else if(vainqueur == 1) {
+            Ut.afficherSL("Le joueur a gagné.");
+        } else {
+            Ut.afficherSL("L'ordinateur a gagné.");
+        }
     }  // fin main
 
 } // fin SudokuBase
