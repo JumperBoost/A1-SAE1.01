@@ -1,9 +1,10 @@
+package extensions;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.lang.*;
 
-public class SudokuBase {
+public class SudokuBase_ext1 {
 
     //.........................................................................
     // Fonctions utiles
@@ -480,14 +481,40 @@ public class SudokuBase {
             suppValPoss(gOrdi, trou[0], trou[1], valPossibles, nbValPoss);
             return 0;
         } else {
-            // Joker
-            afficheGrille(3, gOrdi);
-            Ut.afficherSL("L'ordinateur demande un Joker pour la case (" + (trou[0]+1) + "," + (trou[1]+1) + ")");
-            Ut.afficher("Veuillez saisir le chiffre correspondant à cette case: ");
-            int chiffre = saisirEntierMinMax(1, 9);
-            gOrdi[trou[0]][trou[1]] = chiffre;
-            suppValPoss(gOrdi, trou[0], trou[1], valPossibles, nbValPoss);
-            return 1;
+            if(nbValPoss[trou[0]][trou[1]] == 2) {
+                // Il y a deux valeurs possibles, on en choisit une au hasard
+                int[] chiffresPossibles = new int[2];
+                int n = 0;
+                for(int i = 1; i < valPossibles[trou[0]][trou[1]].length; i++) {
+                    if(valPossibles[trou[0]][trou[1]][i]) {
+                        chiffresPossibles[n++] = i;
+                    }
+                }
+                int chiffre = chiffresPossibles[Ut.randomMinMax(0, 1)];
+                // On demande au joueur humain si c'est le bon chiffre, sinon on prend l'autre valeur avec un point de pénalité
+                afficheGrille(3, gOrdi);
+                Ut.afficherSL("L'ordinateur propose le chiffre " + chiffre + " pour la case (" + (trou[0]+1) + "," + (trou[1]+1) + ")");
+                Ut.afficher("Veuillez saisir 1 si c'est le bon chiffre, 2 sinon: ");
+                int reponse = saisirEntierMinMax(1, 2);
+                if(reponse == 1) {
+                    gOrdi[trou[0]][trou[1]] = chiffre;
+                    suppValPoss(gOrdi, trou[0], trou[1], valPossibles, nbValPoss);
+                    return 0;
+                } else {
+                    gOrdi[trou[0]][trou[1]] = chiffresPossibles[0] == chiffre ? chiffresPossibles[1] : chiffresPossibles[0];
+                    suppValPoss(gOrdi, trou[0], trou[1], valPossibles, nbValPoss);
+                    return 1;
+                }
+            } else {
+                // Il y a plus de deux valeurs possibles, on demande un Joker
+                afficheGrille(3, gOrdi);
+                Ut.afficherSL("L'ordinateur demande un Joker pour la case (" + (trou[0]+1) + "," + (trou[1]+1) + ")");
+                Ut.afficher("Veuillez saisir le chiffre correspondant à cette case: ");
+                int chiffre = saisirEntierMinMax(1, 9);
+                gOrdi[trou[0]][trou[1]] = chiffre;
+                suppValPoss(gOrdi, trou[0], trou[1], valPossibles, nbValPoss);
+                return 1;
+            }
         }
     }  // fin tourOrdinateur
 

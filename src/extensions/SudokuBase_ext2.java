@@ -1,9 +1,10 @@
+package extensions;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.lang.*;
 
-public class SudokuBase {
+public class SudokuBase_ext2 {
 
     //.........................................................................
     // Fonctions utiles
@@ -234,8 +235,8 @@ public class SudokuBase {
 
         Ut.clearConsole();
         afficheGrille(3, g);
-        if(nbGrilleSaisieTrous != nbTrous) {
-            Ut.afficherSL("Impossible, veuillez re-saisir la grille. Il n'y a pas le bon nombre de trous.");
+        if(nbGrilleSaisieTrous != nbTrous || !verifierDoublonGrilleIncomplete(nbTrous, g)) {
+            Ut.afficherSL("Impossible, veuillez re-saisir la grille. Il n'y a pas le bon nombre de trous et/ou il contient des doublons.");
             saisirGrilleIncomplete(nbTrous, g);
         }
     }  // fin saisirGrilleIncomplete
@@ -268,13 +269,51 @@ public class SudokuBase {
                     g[i][j] = chiffre;
                 }
             }
-            if(nbGrilleSaisieTrous != nbTrous) {
-                Ut.afficherSL("Impossible, veuillez re-saisir la grille. Il n'y a pas le bon nombre de trous.");
+            if(nbGrilleSaisieTrous != nbTrous || !verifierDoublonGrilleIncomplete(nbTrous, g)) {
+                Ut.afficherSL("Impossible, veuillez re-saisir la grille. Il n'y a pas le bon nombre de trous et/ou il contient des doublons.");
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
     } // fin saisirGrilleIncompleteFichier
+
+    public static boolean verifierDoublonGrilleIncomplete(int nbTrous, int [][] g){
+        // On parcourt chaque case de la grille
+        for(int i = 0; i < g.length; i++) {
+            for(int j = 0; j < g[i].length; j++) {
+                // Si ce n'est pas un trou, on vérifie qu'il n'y a pas de doublon dans le sous-carré, la ligne et la colonne
+                if(g[i][j] != 0) {
+                    // Sous-carré
+                    int[] debCarre = debCarre(3, i, j);
+                    for (int x = debCarre[0]; x < debCarre[0] + 3; x++) {
+                        for (int y = debCarre[1]; y < debCarre[1] + 3; y++) {
+                            if (g[x][y] == g[i][j] && (x != i || y != j))
+                                return false;
+                        }
+                    }
+
+                    // Ligne
+                    for (int y = 0; y < 9; y++) {
+                        int[] debCarreY = debCarre(3, i, y);
+                        if (debCarreY != debCarre) {
+                            if (g[i][y] == g[i][j] && y != j)
+                                return false;
+                        }
+                    }
+
+                    // Colonne
+                    for (int x = 0; x < 9; x++) {
+                        int[] debCarreX = debCarre(3, x, j);
+                        if (debCarreX != debCarre) {
+                            if (g[x][j] == g[i][j] && x != i)
+                                return false;
+                        }
+                    }
+                }
+            }
+        }
+        return true;
+    }  // fin verifierGrilleIncomplete
 
     //.........................................................................
 
@@ -474,20 +513,57 @@ public class SudokuBase {
     public static int tourOrdinateur(int [][] gOrdi, boolean[][][] valPossibles, int [][]nbValPoss){
         //________________________________________________________________________________________________
         int[] trou = chercheTrou(gOrdi, nbValPoss);
-        if(nbValPoss[trou[0]][trou[1]] == 1) {
+        if(nbValPoss[trou[0]][trou[1]] == 0) {
+            // Il n'y a aucune valeur possible, il y a donc triche de la part du joueur humain
+            return -1;
+        } else if(nbValPoss[trou[0]][trou[1]] == 1) {
             // Trou évident
             gOrdi[trou[0]][trou[1]] = uneValeur(valPossibles[trou[0]][trou[1]]);
             suppValPoss(gOrdi, trou[0], trou[1], valPossibles, nbValPoss);
             return 0;
         } else {
-            // Joker
-            afficheGrille(3, gOrdi);
-            Ut.afficherSL("L'ordinateur demande un Joker pour la case (" + (trou[0]+1) + "," + (trou[1]+1) + ")");
-            Ut.afficher("Veuillez saisir le chiffre correspondant à cette case: ");
-            int chiffre = saisirEntierMinMax(1, 9);
-            gOrdi[trou[0]][trou[1]] = chiffre;
-            suppValPoss(gOrdi, trou[0], trou[1], valPossibles, nbValPoss);
-            return 1;
+            if(nbValPoss[trou[0]][trou[1]] == 2) {
+                // Il y a deux valeurs possibles, on en choisit une au hasard
+                int[] chiffresPossibles = new int[2];
+                int n = 0;
+                for(int i = 1; i < valPossibles[trou[0]][trou[1]].length; i++) {
+                    if(valPossibles[trou[0]][trou[1]][i]) {
+                        chiffresPossibles[n++] = i;
+                    }
+                }
+                int chiffre = chiffresPossibles[Ut.randomMinMax(0, 1)];
+                // On demande au joueur humain si c'est le bon chiffre, sinon on prend l'autre valeur avec un point de pénalité
+                afficheGrille(3, gOrdi);
+                Ut.afficherSL("L'ordinateur propose le chiffre " + chiffre + " pour la case (" + (trou[0]+1) + "," + (trou[1]+1) + ")");
+                Ut.afficher("Veuillez saisir 1 si c'est le bon chiffre, 2 sinon: ");
+                int reponse = saisirEntierMinMax(1, 2);
+                if(reponse == 1) {
+                    gOrdi[trou[0]][trou[1]] = chiffre;
+                    suppValPoss(gOrdi, trou[0], trou[1], valPossibles, nbValPoss);
+                    return 0;
+                } else {
+                    // Dans le cadre de l'extension 3.2 avec la gestion de la triche, nous demanderons systématiquement au joueur humain si l'autre valeur est le bon chiffre
+                    Ut.afficherSL("L'ordinateur propose le chiffre " + chiffre + " pour la case (" + (trou[0]+1) + "," + (trou[1]+1) + ")");
+                    Ut.afficher("Veuillez saisir 1 si c'est le bon chiffre, 2 sinon: ");
+                    reponse = saisirEntierMinMax(1, 2);
+                    if(reponse == 1) {
+                        gOrdi[trou[0]][trou[1]] = chiffresPossibles[0] == chiffre ? chiffresPossibles[1] : chiffresPossibles[0];
+                        suppValPoss(gOrdi, trou[0], trou[1], valPossibles, nbValPoss);
+                        return 1;
+                    } else return -1;   // Le joueur humain a triché, défaite du joueur humain
+                }
+            } else {
+                // Il y a plus de deux valeurs possibles, on demande un Joker
+                afficheGrille(3, gOrdi);
+                Ut.afficherSL("L'ordinateur demande un Joker pour la case (" + (trou[0]+1) + "," + (trou[1]+1) + ")");
+                Ut.afficher("Veuillez saisir le chiffre correspondant à cette case: ");
+                int chiffre = saisirEntierMinMax(1, 9);
+                if(valPossibles[trou[0]][trou[1]][chiffre]) {
+                    gOrdi[trou[0]][trou[1]] = chiffre;
+                    suppValPoss(gOrdi, trou[0], trou[1], valPossibles, nbValPoss);
+                    return 1;
+                } else return -1;   // Le joueur humain a triché, défaite du joueur humain
+            }
         }
     }  // fin tourOrdinateur
 
@@ -511,14 +587,20 @@ public class SudokuBase {
         int nbTrous = initPartie(gSecret, gHumain, gOrdi, valPossibles, nbValPoss);
         int penalitesH = 0, penalitesO = 0;
         // Faire jouer chaque tour
-        while(nbTrous > 0) {
+        boolean tricheHumain = false;
+        while(nbTrous > 0 && !tricheHumain) {
             Ut.clearConsole();
             Ut.afficherSL("C'est au tour du joueur");
             penalitesH += tourHumain(gSecret, gHumain);
             nbTrous--;
             if(nbTrous > 0) {
                 Ut.afficherSL("C'est au tour de l'ordinateur");
-                penalitesO += tourOrdinateur(gOrdi, valPossibles, nbValPoss);
+                int penalite = tourOrdinateur(gOrdi, valPossibles, nbValPoss);
+                if(penalite == -1) {
+                    // Détection de triche, défaite du joueur humain
+                    Ut.afficherSL("Détection de triche, défaite du joueur humain");
+                    tricheHumain = true;
+                } else penalitesO += penalite;
             }
         }
         Ut.clearConsole();
@@ -531,10 +613,10 @@ public class SudokuBase {
         afficheGrille(3, gOrdi);
         Ut.afficherSL("=> Pénalités ordinateur : " + penalitesO);
         // Vérifier le vainqueur
-        if(penalitesH < penalitesO) {
+        if(penalitesH < penalitesO && !tricheHumain) {
             // Le vainqueur est l'humain
             return 1;
-        } else if(penalitesO < penalitesH) {
+        } else if(penalitesO < penalitesH || tricheHumain) {
             // Le vainqueur est l'ordinateur
             return 2;
         } else {
