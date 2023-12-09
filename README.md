@@ -1,5 +1,5 @@
-# A1-SAE1.01
-SAE 1.01 | Année 1 | IUT Montpellier-Sète
+# Année 1 - SAE 1.01
+Projet Sudoku - SAE 1.01 | Année 1 | IUT Montpellier-Sète
 
 # Extensions
 - [x] 3.1/ Joker versus choix aléatoire (1 pt)
