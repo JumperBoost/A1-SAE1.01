@@ -1,5 +1,5 @@
 # A1-SAE1.01
-SAE 1.05 | Année 1 | IUT Montpellier-Sète
+SAE 1.01 | Année 1 | IUT Montpellier-Sète
 
 # Extensions
 - [x] 3.1/ Joker versus choix aléatoire (1 pt)
