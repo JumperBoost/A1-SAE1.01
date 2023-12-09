@@ -25,4 +25,5 @@ replay_pid*
 
 # Jetbrains
 .idea/
+out/
 *.iml

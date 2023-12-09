@@ -1,7 +1,10 @@
 
-// Dernière mise à jour 19/11/2023
+// Dernière mise à jour 4/12/2023
 
 import java.lang.*;
+import java.io.IOException; // MODIFICI
+import java.io.BufferedReader; // MODIFICI
+import java.io.FileReader; // MODIFICI
 
 public class SudokuBase_origin {
 
@@ -167,7 +170,33 @@ public class SudokuBase_origin {
 
     //.........................................................................
 
+    /** MODIFICI
+     *  pré-requis : 0 <= nbTrous <= 81 ; g est une grille 9x9 (vide a priori) ; 
+     *               fic est un nom de fichier de ce répertoire contenant des valeurs de Sudoku
+     *  action :   remplit g avec les valeurs lues dans fic. Si la grille ne contient pas des valeurs 
+     *             entre 0 et 9 ou n'a pas exactement nbTrous valeurs nulles, la méthode doit signaler l'erreur,
+     *             et l'utilisateur doit corriger le fichier jusqu'à ce que ces conditions soient vérifiées.
+     *             On suppose dans la version de base que la grille saisie est bien une grille de Sudoku incomplète.
+     */
+    public static void saisirGrilleIncompleteFichier(int nbTrous, int [][] g, String fic){
+	//_________________________________________________
 
+	try (BufferedReader lecteur = new BufferedReader(new FileReader(fic))) {  
+	    for (int i = 0 ; i < 9 ; i++){
+		String ligne = lecteur.readLine();
+		String [] valeurs = ligne.split("\\s+");
+		for (int j = 0 ; j < 9 ; j++) {
+		    g[i][j] = Integer.parseInt(valeurs[j]);
+		    // Des tests d'erreur sont à ajouter quelque part !
+		}
+		
+	    }
+	} catch (IOException e) {
+	    e.printStackTrace();
+	}
+    } // fin saisirGrilleIncompleteFichier
+    
+    //.........................................................................
 
     /** pré-requis : gOrdi est une grille de Sudoku incomplète,
      *               valPossibles est une matrice 9x9 de tableaux de 10 booléens
