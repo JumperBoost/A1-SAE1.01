@@ -3,8 +3,9 @@ package extensions;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Stack;
 
-public class SudokuBase_ext2 {
+public class SudokuBase_ext3 {
 
     //.........................................................................
     // Fonctions utiles
@@ -503,6 +504,35 @@ public class SudokuBase_ext2 {
         return premierTrou;
     }  // fin chercheTrou
 
+    public static void remplirTabTrous(int[][] gOrdi, int[][] nbValPoss, Stack<int[]> tabTrous) {
+        for(int i = 0; i < gOrdi.length; i++) {
+            for(int j = 0; j < gOrdi[i].length; j++) {
+                if(gOrdi[i][j] == 0) {
+                    // Vérifier si c'est un trou évident
+                    if(nbValPoss[i][j] == 1)
+                        tabTrous.push(new int[]{i, j});
+                }
+            }
+        }
+    }
+
+    // Extension 3.3
+    public static int[] chercheTrou(int[][] gOrdi,int [][]nbValPoss, Stack<int[]> tabTrous){
+        //___________________________________________________________________
+        if(!tabTrous.isEmpty()) {
+            return tabTrous.pop();
+        } else {
+            for(int i = 0; i < gOrdi.length; i++) {
+                for(int j = 0; j < gOrdi[i].length; j++) {
+                    if(gOrdi[i][j] == 0) {
+                        return new int[]{i, j};
+                    }
+                }
+            }
+        }
+        return null;
+    }  // fin chercheTrou
+
     //.........................................................................
 
     /** pré-requis : gOrdi est une grille de Sudoju incomplète,
@@ -513,6 +543,65 @@ public class SudokuBase_ext2 {
     public static int tourOrdinateur(int [][] gOrdi, boolean[][][] valPossibles, int [][]nbValPoss){
         //________________________________________________________________________________________________
         int[] trou = chercheTrou(gOrdi, nbValPoss);
+        if(nbValPoss[trou[0]][trou[1]] == 0) {
+            // Il n'y a aucune valeur possible, il y a donc triche de la part du joueur humain
+            return -1;
+        } else if(nbValPoss[trou[0]][trou[1]] == 1) {
+            // Trou évident
+            gOrdi[trou[0]][trou[1]] = uneValeur(valPossibles[trou[0]][trou[1]]);
+            suppValPoss(gOrdi, trou[0], trou[1], valPossibles, nbValPoss);
+            return 0;
+        } else {
+            if(nbValPoss[trou[0]][trou[1]] == 2) {
+                // Il y a deux valeurs possibles, on en choisit une au hasard
+                int[] chiffresPossibles = new int[2];
+                int n = 0;
+                for(int i = 1; i < valPossibles[trou[0]][trou[1]].length; i++) {
+                    if(valPossibles[trou[0]][trou[1]][i]) {
+                        chiffresPossibles[n++] = i;
+                    }
+                }
+                int chiffreIndex = Ut.randomMinMax(0, 1);
+                // On demande au joueur humain si c'est le bon chiffre, sinon on prend l'autre valeur avec un point de pénalité
+                afficheGrille(3, gOrdi);
+                Ut.afficherSL("L'ordinateur propose le chiffre " + chiffresPossibles[chiffreIndex] + " pour la case (" + (trou[0]+1) + "," + (trou[1]+1) + ")");
+                Ut.afficher("Veuillez saisir 1 si c'est le bon chiffre, 2 sinon: ");
+                int reponse = saisirEntierMinMax(1, 2);
+                if(reponse == 1) {
+                    gOrdi[trou[0]][trou[1]] = chiffresPossibles[chiffreIndex];
+                    suppValPoss(gOrdi, trou[0], trou[1], valPossibles, nbValPoss);
+                    return 0;
+                } else {
+                    // Dans le cadre de l'extension 3.2 avec la gestion de la triche, nous demanderons systématiquement au joueur humain si l'autre valeur est le bon chiffre
+                    int chiffreOpposee = chiffreIndex == 0 ? chiffresPossibles[1] : chiffresPossibles[0];
+                    Ut.afficherSL("L'ordinateur propose le chiffre " + chiffreOpposee + " pour la case (" + (trou[0]+1) + "," + (trou[1]+1) + ")");
+                    Ut.afficher("Veuillez saisir 1 si c'est le bon chiffre, 2 sinon: ");
+                    reponse = saisirEntierMinMax(1, 2);
+                    if(reponse == 1) {
+                        gOrdi[trou[0]][trou[1]] = chiffresPossibles[0] == chiffreOpposee ? chiffresPossibles[1] : chiffresPossibles[0];
+                        suppValPoss(gOrdi, trou[0], trou[1], valPossibles, nbValPoss);
+                        return 1;
+                    } else return -1;   // Le joueur humain a triché, défaite du joueur humain
+                }
+            } else {
+                // Il y a plus de deux valeurs possibles, on demande un Joker
+                afficheGrille(3, gOrdi);
+                Ut.afficherSL("L'ordinateur demande un Joker pour la case (" + (trou[0]+1) + "," + (trou[1]+1) + ")");
+                Ut.afficher("Veuillez saisir le chiffre correspondant à cette case: ");
+                int chiffre = saisirEntierMinMax(1, 9);
+                if(valPossibles[trou[0]][trou[1]][chiffre]) {
+                    gOrdi[trou[0]][trou[1]] = chiffre;
+                    suppValPoss(gOrdi, trou[0], trou[1], valPossibles, nbValPoss);
+                    return 1;
+                } else return -1;   // Le joueur humain a triché, défaite du joueur humain
+            }
+        }
+    }  // fin tourOrdinateur
+
+    // Extension 3.3: Modification de la fonction initiale afin d'utiliser la pile 'tabTrous'
+    public static int tourOrdinateur(int [][] gOrdi, boolean[][][] valPossibles, int [][]nbValPoss, Stack<int[]> tabTrous){
+        //________________________________________________________________________________________________
+        int[] trou = chercheTrou(gOrdi, nbValPoss, tabTrous);
         if(nbValPoss[trou[0]][trou[1]] == 0) {
             // Il n'y a aucune valeur possible, il y a donc triche de la part du joueur humain
             return -1;
@@ -586,6 +675,9 @@ public class SudokuBase_ext2 {
         boolean[][][] valPossibles = new boolean[9][9][10];
 
         int nbTrous = initPartie(gSecret, gHumain, gOrdi, valPossibles, nbValPoss);
+        // Extension 3.3: Création d'une pile de trous évidents
+        Stack<int[]> tabTrous = new Stack<>();
+        remplirTabTrous(gOrdi, nbValPoss, tabTrous);
         int penalitesH = 0, penalitesO = 0;
         // Faire jouer chaque tour
         boolean tricheHumain = false;
@@ -596,7 +688,8 @@ public class SudokuBase_ext2 {
             nbTrous--;
             if(nbTrous > 0) {
                 Ut.afficherSL("C'est au tour de l'ordinateur");
-                int penalite = tourOrdinateur(gOrdi, valPossibles, nbValPoss);
+                // Extension 3.3: Mise en référence de la pile 'tabTrous' via la fonction 'tourOrdinateur'
+                int penalite = tourOrdinateur(gOrdi, valPossibles, nbValPoss, tabTrous);
                 if(penalite == -1) {
                     // Détection de triche, défaite du joueur humain
                     Ut.afficherSL("Détection de triche, défaite du joueur humain");
