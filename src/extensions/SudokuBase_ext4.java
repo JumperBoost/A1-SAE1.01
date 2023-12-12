@@ -663,25 +663,82 @@ public class SudokuBase_ext4 {
         initGrilleComplete(grille);
         // On répète nbSuccessions fois les transformations à la grille
         for(int i = 0; i < nbSuccessions; i++) {
-            int chiffreAleatoire = Ut.randomMinMax(0, 0);   // À CHANGER DÈS IMPLÉMENTATION
+            int chiffreAleatoire = Ut.randomMinMax(0, 3);
             if (chiffreAleatoire == 0)
                 grille = rotationGrille(grille);
             else if (chiffreAleatoire == 1)
-                return null;    // À IMPLEMENTER
+                grille = symetrieHorizontalGrille(grille);
             else if (chiffreAleatoire == 2)
-                return null;    // À IMPLEMENTER
-            else return null;   // À IMPLEMENTER
+                grille = symetrieDiagonaleGrille(grille);
+            else {
+                int[] nbLignes = new int[2];
+                nbLignes[0] = Ut.randomMinMax(0, 2);
+                while (nbLignes[1] == 0) {
+                    int nb = Ut.randomMinMax(0, 2);
+                    if(nbLignes[0] != nb)
+                        nbLignes[1] = nb;
+                }
+                grille = flipflopGrille(grille, nbLignes[0], nbLignes[1]);
+            }
         }
         return grille;
     }
 
-    // Extension 3.4: Implémentation de la fonction rotation
+    // Extension 3.4: Implémentation de la fonction rotation 90 degrès (1/4)
     public static int[][] rotationGrille(int[][] grille) {
         int[][] nvGrille = new int[grille.length][grille[0].length];
         for(int i = 0; i < grille.length; i++) {
             for(int j = 0; j < grille[i].length; j++) {
                 nvGrille[j][grille.length-1-i] = grille[i][j];
             }
+        }
+        return nvGrille;
+    }
+
+    // Extension 3.4: Implémentation de la fonction symétrie horizontal (2/4)
+    public static int[][] symetrieHorizontalGrille(int[][] grille) {
+        int[][] nvGrille = new int[grille.length][grille[0].length];
+        // Symétrie horizontal
+        for(int i = 0; i < nvGrille.length/2; i++) {
+            for(int j = 0; j < nvGrille[i].length; j++) {
+                nvGrille[i][j] = grille[nvGrille.length-1 - i][j];
+                nvGrille[nvGrille.length-1 - i][j] = grille[i][j];
+            }
+        }
+        // Copie de la ligne du milieu, si nécessaire
+        if(nvGrille.length % 2 != 0) {
+            int index = nvGrille.length/2;
+            for(int j = 0; j < nvGrille[index].length; j++)
+                nvGrille[index][j] = grille[index][j];
+        }
+        return nvGrille;
+    }
+
+    // Extension 3.4: Implémentation de la fonction symétrie diagonale (3/4)
+    public static int[][] symetrieDiagonaleGrille(int[][] grille) {
+        int[][] nvGrille = new int[grille.length][grille[0].length];
+        // Symétrie diagonale
+        for(int i = 0; i <= nvGrille.length/2 + 1 + (nvGrille.length % 2)*2; i++) {
+            for(int j = 0; j <= i; j++) {
+                nvGrille[i-j][j] = grille[nvGrille.length-1 - j][nvGrille.length-1 - i + j];
+                nvGrille[nvGrille.length-1 - j][nvGrille.length-1 - i + j] = grille[i-j][j];
+            }
+        }
+        // Copue de la ligne du milieu de la diagonale
+        int index = nvGrille.length - 1;
+        for(int i = 0; i < nvGrille.length; i++)
+            nvGrille[index-i][i] = grille[index-i][i];
+        return nvGrille;
+    }
+
+    // Extension 3.4: Implémentation de la fonction flip-flop (4/4)
+    public static int[][] flipflopGrille(int[][] grille, int nbLigneUne, int nbLigneDeux) {
+        int[][] nvGrille = new int[grille.length][grille[0].length];
+        int debCarreRandom = Ut.randomMinMax(0, 2);
+        copieMatrice(grille, nvGrille);
+        for(int j = 0; j < nvGrille.length; j++) {
+            nvGrille[debCarreRandom*3 + nbLigneUne][j] = grille[debCarreRandom*3 + nbLigneDeux][j];
+            nvGrille[debCarreRandom*3 + nbLigneDeux][j] = grille[debCarreRandom*3 + nbLigneUne][j];
         }
         return nvGrille;
     }
@@ -757,20 +814,6 @@ public class SudokuBase_ext4 {
      */
     public static void main(String[] args){
         //________________________________________
-
-        /*
-        Test d'implémentation temporaire extension 3.4
-         */
-        int[][] grilleO = new int[9][9];
-        initGrilleComplete(grilleO);
-        afficheGrille(3, grilleO);
-        Ut.passerALaLigne();
-        Ut.afficherSL("----------------------");
-        Ut.passerALaLigne();
-        int[][] grille = genererGrilleCompleteOrdinateur(3);
-        afficheGrille(3, grille);
-
-
         int vainqueur = partie();
         if(vainqueur == 0) {
             Ut.afficherSL("Match nul. Il n'y a aucun vainqueur.");
