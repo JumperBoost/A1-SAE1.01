@@ -15,3 +15,9 @@ Extension n°4 : 'SudokuBase_ext4'
     - La fonction 'symetrieHorizontalGrille' échange symétriquement les positions horizontalement;
     - La fonction 'symetrieDiagonaleGrille' échange symétriquement les positions diagonalement;
     - La fonction 'flipflopGrille' échange deux lignes précisé en paramètres, appartenant au même sous-carré. Ce sous-carré étant choisi aléatoirement à chaque appel.
+
+Extension n°5 : 'SudokuBase_ext5'
+=> Pour créer une grille incomplète à partir d'une grille complète, avec trous évidents seulement, nous avons décidés de séparer en trois fonctions:
+    - La fonction 'genererGrilleIncompleteFacile' qui est la base de l'extension qui permet de parcourir la grille indiqué en paramètre et d'attribuer les trous si possible;
+    - La fonction 'peutEtreEvident' qui vérifie si la case indiqué en paramètre peut être un trou évident;
+    - La fonction 'verifierNouvelEvident' qui vérifie si la case indiqué en paramètre peut être un trou évident et n'affecte pas les autres trous évidents. Si cette dernière vérification n'est pas faite, les trous précédents peuvent se retrouver avec plusieurs solutions (donc plus évidents).
