@@ -196,18 +196,16 @@ public class SudokuBase_ext5 {
      */
     public static void initGrilleIncomplete(int nbTrous, int [][] gSecret, int[][] gIncomplete){
         //___________________________________________________________________________
-        int[][] grille = new int[gSecret.length][gSecret[0].length];
-        copieMatrice(gSecret, grille);
+        copieMatrice(gSecret, gIncomplete);
         while(nbTrous > 0) {
             int x = Ut.randomMinMax(0, 8);
             int y = Ut.randomMinMax(0, 8);
 
-            if(grille[x][y] != 0) {
-                grille[x][y] = 0;
+            if(gIncomplete[x][y] != 0) {
+                gIncomplete[x][y] = 0;
                 nbTrous--;
             }
         }
-        copieMatrice(grille, gIncomplete);
     } // fin initGrilleIncomplete
 
     //.........................................................................
@@ -430,7 +428,11 @@ public class SudokuBase_ext5 {
         initGrilleComplete(gSecret);
         initGrilleIncomplete(nbTrous, gSecret, gHumain);
         initPleines(gOrdi, valPossibles, nbValPoss);
-        saisirGrilleIncompleteFichier(nbTrous, gOrdi, "grille1.txt");
+        Ut.afficher("Voulez-vous saisir manuellement la grille de l'ordinateur ou depuis 'grille1.txt' ? (1 pour manuel, 2 pour fichier): ");
+        int choix = saisirEntierMinMax(1, 2);
+        if(choix == 1)
+            saisirGrilleIncomplete(nbTrous, gOrdi);
+        else saisirGrilleIncompleteFichier(nbTrous, gOrdi, "grille1.txt");
         initPossibles(gOrdi, valPossibles, nbValPoss);
         return nbTrous;
     }
@@ -746,17 +748,17 @@ public class SudokuBase_ext5 {
     }
 
     // Extension 3.5: Implémentation de la grille incomplète de niveau facile
-    public static int[][] genererGrilleIncompleteFacile(int[][] grille) {
-        int[][] grilleModif = new int[grille.length][grille[0].length];
-        copieMatrice(grille, grilleModif);
-
+    public static int initGrilleIncompleteFacile(int[][] grille) {
+        int nbTrous = 0;
         for(int i = 0; i < grille.length; i++) {
             for(int j = 0; j < grille[i].length; j++) {
-                if(verifierNouvelEvident(grilleModif, i, j))
-                    grilleModif[i][j] = 0;
+                if(verifierNouvelEvident(grille, i, j)) {
+                    grille[i][j] = 0;
+                    nbTrous++;
+                }
             }
         }
-        return grilleModif;
+        return nbTrous;
     }
 
     // Extension 3.5: Implémentation fonction vérification case trou évidente
@@ -778,7 +780,7 @@ public class SudokuBase_ext5 {
             }
         }
 
-        // On retire dans la liste des possibilités toutes les valeurs des cases de la ligne et cs
+        // On retire dans la liste des possibilités toutes les valeurs des cases de la ligne et colonne couyrante
         for(int n = 0; n < grille.length; n++) {
             int chiffreLigne = grille[x][n];
             int chiffreColonne = grille[n][y];
@@ -802,11 +804,15 @@ public class SudokuBase_ext5 {
     // Extension 3.5: Implémentation fonction vérification grille trous évidents avec nouveau trou évident
     public static boolean verifierNouvelEvident(int[][] grille, int x, int y) {
         if(peutEtreEvident(grille, x, y)) {
+            int[][] nvGrille = new int[grille.length][grille[0].length];
+            copieMatrice(grille, nvGrille);
+            nvGrille[x][y] = 0;
+
             // On retire dans la liste des possibilités toutes les valeurs des cases du sous-carré courant
             int[] debCarre = debCarre(3, x, y);
             for(int i = debCarre[0]; i < debCarre[0] + 3; i++) {
                 for(int j = debCarre[1]; j < debCarre[1] + 3; j++) {
-                    if(grille[i][j] == 0 && !peutEtreEvident(grille, i, j))
+                    if(grille[i][j] == 0 && !peutEtreEvident(nvGrille, i, j))
                         return false;
                 }
             }
@@ -817,10 +823,10 @@ public class SudokuBase_ext5 {
                 int chiffreColonne = grille[n][y];
 
                 // Ligne
-                if(chiffreLigne == 0 && !peutEtreEvident(grille, x, n))
+                if(chiffreLigne == 0 && !peutEtreEvident(nvGrille, x, n))
                     return false;
                 // Colonne
-                if(chiffreColonne == 0 && !peutEtreEvident(grille, n, y))
+                if(chiffreColonne == 0 && !peutEtreEvident(nvGrille, n, y))
                     return false;
             }
             return true;
@@ -898,17 +904,6 @@ public class SudokuBase_ext5 {
      */
     public static void main(String[] args){
         //________________________________________
-        /*
-          Test implémentation extension 3.5
-           */
-        int[][] grilleComplete = genererGrilleCompleteOrdinateur(3);
-        int[][] grilleIncomplete = genererGrilleIncompleteFacile(grilleComplete);
-
-        afficheGrille(3, grilleComplete);
-        Ut.afficherSL("-----------");
-        afficheGrille(3, grilleIncomplete);
-        Ut.afficherSL("-----------");
-
         int vainqueur = partie();
         if(vainqueur == 0) {
             Ut.afficherSL("Match nul. Il n'y a aucun vainqueur.");

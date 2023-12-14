@@ -1,7 +1,6 @@
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.lang.*;
 
 public class SudokuBase {
 
@@ -194,18 +193,16 @@ public class SudokuBase {
      */
     public static void initGrilleIncomplete(int nbTrous, int [][] gSecret, int[][] gIncomplete){
         //___________________________________________________________________________
-        int[][] grille = new int[gSecret.length][gSecret[0].length];
-        copieMatrice(gSecret, grille);
+        copieMatrice(gSecret, gIncomplete);
         while(nbTrous > 0) {
             int x = Ut.randomMinMax(0, 8);
             int y = Ut.randomMinMax(0, 8);
 
-            if(grille[x][y] != 0) {
-                grille[x][y] = 0;
+            if(gIncomplete[x][y] != 0) {
+                gIncomplete[x][y] = 0;
                 nbTrous--;
             }
         }
-        copieMatrice(grille, gIncomplete);
     } // fin initGrilleIncomplete
 
     //.........................................................................
@@ -390,7 +387,11 @@ public class SudokuBase {
         initGrilleComplete(gSecret);
         initGrilleIncomplete(nbTrous, gSecret, gHumain);
         initPleines(gOrdi, valPossibles, nbValPoss);
-        saisirGrilleIncompleteFichier(nbTrous, gOrdi, "grille1.txt");
+        Ut.afficher("Voulez-vous saisir manuellement la grille de l'ordinateur ou depuis 'grille1.txt' ? (1 pour manuel, 2 pour fichier): ");
+        int choix = saisirEntierMinMax(1, 2);
+        if(choix == 1)
+            saisirGrilleIncomplete(nbTrous, gOrdi);
+        else saisirGrilleIncompleteFichier(nbTrous, gOrdi, "grille1.txt");
         initPossibles(gOrdi, valPossibles, nbValPoss);
         return nbTrous;
     }

@@ -196,18 +196,16 @@ public class SudokuBase_ext3 {
      */
     public static void initGrilleIncomplete(int nbTrous, int [][] gSecret, int[][] gIncomplete){
         //___________________________________________________________________________
-        int[][] grille = new int[gSecret.length][gSecret[0].length];
-        copieMatrice(gSecret, grille);
+        copieMatrice(gSecret, gIncomplete);
         while(nbTrous > 0) {
             int x = Ut.randomMinMax(0, 8);
             int y = Ut.randomMinMax(0, 8);
 
-            if(grille[x][y] != 0) {
-                grille[x][y] = 0;
+            if(gIncomplete[x][y] != 0) {
+                gIncomplete[x][y] = 0;
                 nbTrous--;
             }
         }
-        copieMatrice(grille, gIncomplete);
     } // fin initGrilleIncomplete
 
     //.........................................................................
@@ -430,7 +428,11 @@ public class SudokuBase_ext3 {
         initGrilleComplete(gSecret);
         initGrilleIncomplete(nbTrous, gSecret, gHumain);
         initPleines(gOrdi, valPossibles, nbValPoss);
-        saisirGrilleIncompleteFichier(nbTrous, gOrdi, "grille1.txt");
+        Ut.afficher("Voulez-vous saisir manuellement la grille de l'ordinateur ou depuis 'grille1.txt' ? (1 pour manuel, 2 pour fichier): ");
+        int choix = saisirEntierMinMax(1, 2);
+        if(choix == 1)
+            saisirGrilleIncomplete(nbTrous, gOrdi);
+        else saisirGrilleIncompleteFichier(nbTrous, gOrdi, "grille1.txt");
         initPossibles(gOrdi, valPossibles, nbValPoss);
         return nbTrous;
     }
@@ -506,6 +508,7 @@ public class SudokuBase_ext3 {
         return premierTrou;
     }  // fin chercheTrou
 
+    // Extension 3.3: Remplit le tableau de trous par tous les trous évidents dans la grille
     public static void remplirTabTrous(int[][] gOrdi, int[][] nbValPoss, Stack<int[]> tabTrous) {
         for(int i = 0; i < gOrdi.length; i++) {
             for(int j = 0; j < gOrdi[i].length; j++) {
@@ -518,7 +521,7 @@ public class SudokuBase_ext3 {
         }
     }
 
-    // Extension 3.3
+    // Extension 3.3: Retourne le trou évident en haut de la pile, ou retourne la 1re case vide dans le cas échéant
     public static int[] chercheTrou(int[][] gOrdi,int [][]nbValPoss, Stack<int[]> tabTrous){
         //___________________________________________________________________
         if(!tabTrous.isEmpty()) {
