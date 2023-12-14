@@ -136,7 +136,9 @@ public class SudokuBase {
             for(int j = 0; j < k; j++) {
                 Ut.afficher((n+1) + " |");
                 for(int m = 0; m < k; m++) {
-                    Ut.afficher(g[n][k*m] + " " + g[n][k*m+1] + " " + g[n][k*m+2] + "|");
+                    Ut.afficher((g[n][k * m] == 0 ? "." : g[n][k * m]) + " " +
+                            (g[n][k * m + 1] == 0 ? "." : g[n][k * m + 1]) + " " +
+                            (g[n][k * m + 2] == 0 ? "." : g[n][k * m + 2]) + "|");
                 }
                 Ut.sauterALaLigne();
                 n++;

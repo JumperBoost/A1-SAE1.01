@@ -138,7 +138,9 @@ public class SudokuBase_ext4 {
             for(int j = 0; j < k; j++) {
                 Ut.afficher((n+1) + " |");
                 for(int m = 0; m < k; m++) {
-                    Ut.afficher(g[n][k*m] + " " + g[n][k*m+1] + " " + g[n][k*m+2] + "|");
+                    Ut.afficher((g[n][k * m] == 0 ? "." : g[n][k * m]) + " " +
+                            (g[n][k * m + 1] == 0 ? "." : g[n][k * m + 1]) + " " +
+                            (g[n][k * m + 2] == 0 ? "." : g[n][k * m + 2]) + "|");
                 }
                 Ut.sauterALaLigne();
                 n++;
@@ -814,6 +816,7 @@ public class SudokuBase_ext4 {
      */
     public static void main(String[] args){
         //________________________________________
+        genererGrilleCompleteOrdinateur(1);
         int vainqueur = partie();
         if(vainqueur == 0) {
             Ut.afficherSL("Match nul. Il n'y a aucun vainqueur.");
